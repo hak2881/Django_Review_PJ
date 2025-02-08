@@ -4,12 +4,12 @@ from django.db import models
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, password, nickname):
+    def create_user(self, email, password, nickname,*args, **kwargs):
         if not email or not nickname:
             raise ValueError("이메일, 닉네임을 입력하세요")
         user = self.model(
             email=self.normalize_email(email),
-            nickname=nickname,
+            nickname=nickname,*args, **kwargs
         )
         user.set_password(password)
         user.save(using=self._db)
