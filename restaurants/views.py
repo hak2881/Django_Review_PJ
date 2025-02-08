@@ -10,4 +10,5 @@ from restaurants.serializers import RestaurantSerializer
 class RestaurantViewSet(viewsets.ModelViewSet):
     queryset = Restaurant.objects.all()
     serializer_class = RestaurantSerializer
+    permissions_classes = (permissions.IsAuthenticatedOrReadOnly, )
 

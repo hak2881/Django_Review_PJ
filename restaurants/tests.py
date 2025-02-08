@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APITestCase
@@ -17,6 +18,7 @@ class RestaurantTestCase(TestCase):
             'regular_holiday' :'MON'
         }
 
+
     def test_create_restaurant(self):
         restaurant = Restaurant.objects.create(**self.restaurant_info)
 
@@ -32,6 +34,14 @@ class RestaurantViewTestCase(APITestCase):
             'contact': '없음',
             'regular_holiday': 'MON'
         }
+        self.user = get_user_model().objects.create_user(
+            email='test@test.com',
+            nickname='test',
+            password='password1234',
+        )
+        # self.client.force_authenticate(user=self.user)
+        self.client.login(email='test@test.com', password='password1234')
+
     def test_restaurant_list_view(self):
         url = reverse('restaurant-list')
         restaurant = Restaurant.objects.create(**self.restaurant_info)
@@ -41,13 +51,14 @@ class RestaurantViewTestCase(APITestCase):
 
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data[0].get('name'), 'test')
-        self.assertEqual(response.data[0]['regular_holiday'], self.restaurant_info['regular_holiday'])
+        self.assertEqual(response.data.get('results')[0].get('name'), 'test')
+        self.assertEqual(response.data.get('results')[0]['regular_holiday'], self.restaurant_info['regular_holiday'])
 
     def test_restaurant_post_view(self):
         # restaurant-create 는 존재하지 않음
         url = reverse('restaurant-list')
 
+        # self.client.force_authenticate(user=self.user)
         response = self.client.post(url, data=self.restaurant_info, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -68,13 +79,16 @@ class RestaurantViewTestCase(APITestCase):
         restaurant = Restaurant.objects.create(**self.restaurant_info)
         url = reverse('restaurant-detail', kwargs={'pk':restaurant.pk})
 
+        # self.client.force_authenticate(user=self.user)
         response = self.client.patch(url, {'name':'patch'}, format='json')
 
+
         self.assertEqual(response.data.get('name'),'patch')
-    
+
     def test_restaurant_delete_view(self):
         restaurant = Restaurant.objects.create(**self.restaurant_info)
 
+        # self.client.force_authenticate(user=self.user)
         url = reverse('restaurant-detail', kwargs={'pk':restaurant.pk})
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
