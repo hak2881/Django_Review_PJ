@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from restaurants.models import Restaurant
 from reviews.models import Review
-from reviews.serializers import ReviewSerializer
+from reviews.serializers import ReviewSerializer, ReviewDetailSerializer
 
 
 # Create your views here.
@@ -24,7 +24,7 @@ class ReviewListCreateView(ListCreateAPIView):
         serializer.save(user=self.request.user, restaurant=restaurant)
 
 class ReviewDetailView(RetrieveUpdateDestroyAPIView):
-    serializer_class = ReviewSerializer
+    serializer_class = ReviewDetailSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):

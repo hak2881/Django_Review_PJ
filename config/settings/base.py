@@ -10,10 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import json
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -32,6 +33,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+print('base')
 
 # Application definition
 
@@ -51,6 +53,8 @@ INSTALLED_APPS = [
     'django_cleanup',
     'django_extensions',
     'rest_framework',
+    'rest_framework_simplejwt',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -87,16 +91,6 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': SECRET["DB"]["NAME"],         # 데이터베이스 이름
-        'USER': SECRET["DB"]["USER"],            # MySQL 사용자 이름
-        'PASSWORD': SECRET["DB"]["PASSWORD"],    # MySQL 비밀번호
-        'HOST': SECRET["DB"]["HOST"],                  # MySQL 서버 주소 (기본: localhost)
-        'PORT': SECRET["DB"]["PORT"],
-    }
-}
 
 
 # Password validation
@@ -152,8 +146,17 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
+        'users.authentication.CustomJWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+
     ]
+}
+
+SIMPLE_JWT = {
+  # It will work instead of the default serializer(TokenObtainPairSerializer).
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+  # ...
 }
