@@ -9,7 +9,7 @@ print('*' * 100)
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['PythonAnywhere 배포도메인']
+ALLOWED_HOSTS = ['hak1319.pythonanywhere.com']
 
 # Static
 STATIC_URL = 'static/'
