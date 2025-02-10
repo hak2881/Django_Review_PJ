@@ -16,10 +16,23 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
+from config.schema import schema_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('restaurants.urls')),
     path('', include('users.urls')),
     path('',include('reviews.urls')),
+
+    # token
+    path('token', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh', TokenRefreshView.as_view(), name='token_refresh'), # 만료되기 전에 refresh 토근을 이용해 access토큰을 다시한번 받음
+    path('token/verify', TokenVerifyView.as_view(), name='token_verify'),
+
+    # swagger
+    path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+
 ]

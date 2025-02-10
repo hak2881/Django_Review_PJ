@@ -5,7 +5,7 @@ from reviews.models import Review
 from users.serializers import UserSerializer, UserDetailSerializer
 
 
-class ReviewSerializer(serializers.ModelSerializer):
+class ReviewDetailSerializer(serializers.ModelSerializer):
     user = UserDetailSerializer(read_only=True)
     restaurant = RestaurantSerializer(read_only=True)
     # ✔ user 필드는 UserDetailSerializer를 사용하여 직렬화
@@ -16,6 +16,16 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ['pk','user','restaurant','title','comment']
+        fields = "__all__"
 
         READ_ONLY_FIELDS = ['pk','restaurant']
+
+class ReviewSerializer(serializers.ModelSerializer):
+    # 리뷰 제목, 텍스트와 함께 작성자의 정보, 레스토랑의 정보를 함께 보냄
+    user = UserDetailSerializer(read_only=True)
+
+    class Meta:
+        model = Review
+        fields = "__all__"
+        # user, restaurant 필드는 serializer.save()의 인자로 전달할 것이기 때문에 읽기 전용 필드로 설정
+        read_only_fields = ["id", "restaurant"]
